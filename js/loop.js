@@ -1,127 +1,77 @@
-var card_flip = function(){
-      this.classList.toggle('on');
-      this.classList.toggle('off');
+var github_emojis;
+
+var http_request = new XMLHttpRequest;
+http_request.open('GET','https://api.github.com/emojis',false);
+
+http_request.onreadystatechange = function(event){	
+	if(this.readyState === this.DONE && this.status === 200){
+	
+		 github_emojis = JSON.parse(this.response);
+		
+	}
+};
+
+var get_random_emoji = function(){
+    
+    var total_number_of_emojis = Object.keys(github_emojis).length;
+    var random_number = Math.round(Math.random()*total_number_of_emojis);
+    
+    var emoji_name = Object.keys(github_emojis)[random_number];
+    emoji_name = emoji_name.toString();
+    
+    var emoji_url = github_emojis[emoji_name];
+    return emoji_url;
 }
 
-var create_images = function(){
 
-  
 
-        for(var i=1;i<=68;i++){
-               
-               
-                var image_container = document.createElement('section');
-                
-                image_container.setAttribute('id','img_container_'+i);
-                document.body.appendChild(image_container);
-                
-                var image = document.createElement('img');
-                image.setAttribute('src','images/profile_photo_'+i+'.jpg');
-                
-                image.setAttribute('id', 'img_'+i);
 
+var get_emoji_urls = function(amount_to_get){
+    
+        var total_number_of_emojis = Object.keys(github_emojis).length;
+        for(var i=0; i < amount_to_get; i++){
+            
+            var emoji_name = Object.keys(github_emojis)[i];
+            var emoji_url = github_emojis[emoji_name];
+            
+            emoji_name = emoji_name.toString();
+            
+         
+            var image = document.createElement('img');
+            image.addEventListener('click',function(event){
                 
-                image.classList.add('on');
+               this.setAttribute('src',get_random_emoji()); 
                 
-                
-                image.addEventListener('click',function(event){
-                   
-                      
-                      if(this.getAttribute('class') === 'on'){
-                              this.setAttribute('class','off');
-                              this.parentElement.children[1].setAttribute('class','on');
-                              
-                              
-                      }else{
-                              this.setAttribute('class','on');
-                              this.parentElement.children[1].setAttribute('class','off');
-                              
-                      }
-                      
-                                            event.preventDefault();
+            });
+            
+            
+            
+            var image_name = document.createElement('span');
+            image_name.textContent = emoji_name;
+            
+            
+            
+            
+            
+            
+            image.setAttribute('src',emoji_url);
 
-                      
-                      console.log(this);
-                        
-                });
-                
-                
-                
-                
-                
-                
-                image_container.appendChild(image);
-                
-                
-                
-                var image_info = document.createElement('span');
-                
-                image_info.setAttribute('id','img_info_container_'+i);
-                image_info.classList.add('off');
-                
-                
-                image_info.addEventListener('click',function(event){
-                        
-                     if(this.getAttribute('class') === 'on'){
-                              this.setAttribute('class','off');
-                              this.parentElement.children[0].setAttribute('class','on');
-                              
-                              
-                      }else{
-                              this.setAttribute('class','on');
-                              this.parentElement.children[0].setAttribute('class','off');
-                              
-                      }
-                           event.preventDefault();
+            document.body.appendChild(image);
 
-                      
-                      console.log(this);
-                        
-                        
-                        
-                });
-                
-                
-                
-                
-                
-                var image_info_github_link = document.createElement('a');
-                var image_info_twitter_link = document.createElement('a');
-                
-                image_info_github_link.setAttribute('id','img_info_github_link_'+i);
-                image_info_github_link.setAttribute('href','http://www.github.com/geekwise');
-                image_info_github_link.textContent = 'github link '+i;
-                 image_info_github_link.style.position = 'relative';
-                   image_info_github_link.style. top = '170px';
-                   
-                   
-                image_info_twitter_link.setAttribute('id','img_info_twitter_link_'+i);
-                
-                image_info_twitter_link.setAttribute('href','http://www.twitter.com/');
-                image_info_twitter_link.textContent = 'twitter link'+i;
-                 image_info_twitter_link.style.margin = '20px';
-                  image_info_twitter_link.style.position = 'relative';
-                   image_info_twitter_link.style. top = '170px';
-                   
-                   
-                image_container.appendChild(image_info);
-                image_info.appendChild(image_info_github_link);
-                image_info.appendChild(image_info_twitter_link);
-                
-                
-                
-                
-                
-                
-                
-        };
+        }
         
-
+        
 }
+
+
 
 
 document.addEventListener('DOMContentLoaded',function(event){
-
-        create_images();
-        
+    
+   
+    http_request.send(null);
+    get_emoji_urls(10);
+    
+    
 });
+
